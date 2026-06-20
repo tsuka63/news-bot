@@ -1,0 +1,36 @@
+name: Daily news
+
+on:
+  schedule:
+    - cron: "0 22 * * *"   # 07:00 JST daily (after US market close)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-news
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements-ci.txt
+      - run: python scripts/cloud_run.py
+      - name: Commit report
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/index.html
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Daily news update ($(TZ=Asia/Tokyo date +%Y-%m-%d))"
+            git push
+          fi
