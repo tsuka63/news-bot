@@ -1,8 +1,8 @@
-name: Daily news
+name: Hourly news
 
 on:
   schedule:
-    - cron: "0 22 * * *"   # 07:00 JST daily (after US market close)
+    - cron: "0 * * * *"    # every hour (page is at most ~1h stale)
   workflow_dispatch: {}
 
 permissions:
