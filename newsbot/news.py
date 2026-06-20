@@ -69,6 +69,11 @@ def _parse_item(raw: dict) -> dict | None:
 
 
 def fetch_for(ticker: str, limit: int = 6) -> list[dict]:
+    # Japanese tickers → Yahoo Finance Japan (yfinance has no JP news)
+    from newsbot.jp_news import is_jp, fetch_jp
+    if is_jp(ticker):
+        return fetch_jp(ticker, limit=limit)
+
     import yfinance as yf
     try:
         raw = yf.Ticker(ticker).news or []
