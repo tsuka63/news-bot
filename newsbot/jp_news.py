@@ -39,15 +39,24 @@ def is_jp(ticker: str) -> bool:
     return bool(re.match(r"^\d{4}(\.T)?$", ticker))
 
 
+def _get(url: str, retries: int = 3) -> str:
+    import time
+    for i in range(retries):
+        try:
+            r = requests.get(url, headers={"User-Agent": _UA}, timeout=15)
+            r.raise_for_status()
+            return r.text
+        except Exception:
+            if i == retries - 1:
+                return ""
+            time.sleep(2 * (i + 1))
+    return ""
+
+
 def fetch_jp(ticker: str, limit: int = 6) -> list[dict]:
     code = ticker.replace(".T", "")
-    try:
-        html = requests.get(
-            f"{_BASE}/quote/{code}.T/news",
-            headers={"User-Agent": _UA},
-            timeout=15,
-        ).text
-    except Exception:
+    html = _get(f"{_BASE}/quote/{code}.T/news")
+    if not html:
         return []
 
     out: list[dict] = []

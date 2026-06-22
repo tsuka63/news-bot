@@ -9,9 +9,10 @@ focus the watchlist on names with real coverage. Edit freely.
 # (ticker, 表示名) — your holdings + macro indicators
 # 4桁コード（例 "4179"）は日本株 → Yahoo!ファイナンスJPからニュース取得。
 WATCHLIST: list[tuple[str, str]] = [
-    # 保有・注目の個別株
+    # 保有・注目の個別株（米国は個別ニュースが取れる）
     ("SPCX",      "SpaceX"),
-    ("4179",      "ジーネクスト"),
+    # 日本市場ニュース（※個別企業ではなく市況・為替などの市場全体ニュース）
+    ("4179",      "日本市場"),
     # 指数（マクロ・市況ニュースの入口）
     ("^GSPC",     "S&P500"),
     ("^N225",     "日経平均"),
